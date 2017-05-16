@@ -1,0 +1,58 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>auto rotate example</title>
+        <script type="text/javascript" src="binaryajax.js"></script>
+        <script type="text/javascript" src="exif.js"></script>
+        <script type="text/javascript" src="rotate.js"></script>
+    </head>
+    <body>
+        <div>
+            <img id="img" width="400" />
+        </div>
+        <div id="info">
+        </div>
+        <div><input type="button" value="加载中..." id="btn" disabled /></div> 
+
+        <script type="text/javascript">
+        var imgUrl = 'http://example.org/with-cors.jpg'
+        var imgId = 'img1'
+        var infoId = 'info'
+        img.src = imgUrl
+
+        BinaryAjax(imgUrl, function(o) {
+            var oExif = EXIF.readFromBinaryFile(o.binaryResponse),
+                orientation = oExif.Orientation;
+                html = [];
+
+            html.push('<ol>');
+            for(var key in oExif) {
+                var val = oExif[key];
+                html.push('<li>', key, '&nbsp;&nbsp;:&nbsp;&nbsp;<em>');
+                html.push(val, '</em></li>');
+            }
+            html.push('</ol>');
+            document.getElementById(infoId).innerHTML = html.join('');
+
+            btn.value = '自动旋转';
+            btn.disabled = false;
+            btn.onclick = function() {
+                var img = document.getElementById(imgId);
+                switch(orientation) {
+                    case 6:
+                        Rotate(img, '90deg');
+                        break;
+                    case 3:
+                        Rotate(img, '180deg');
+                        break;
+                    case 8:
+                        Rotate(img, '270deg');
+                        break;
+                }
+                btn.disabled = true;
+            };
+        });
+        </script>
+    </body>
+</html>
